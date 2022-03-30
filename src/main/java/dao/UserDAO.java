@@ -14,6 +14,7 @@ public class UserDAO implements IUserDAO {
     private static final String INSERT_USERS_SQL = "INSERT INTO users" + "  (name, email, country) VALUES " +
             " (?, ?, ?);";
 
+    private static final String SEARCH_USER_BY_COUNTRY = "select * from users where country = ? ";
     private static final String SELECT_USER_BY_ID = "select id,name,email,country from users where id =?";
     private static final String SELECT_ALL_USERS = "select * from users";
     private static final String DELETE_USERS_SQL = "delete from users where id = ?;";
@@ -124,6 +125,29 @@ public class UserDAO implements IUserDAO {
         return rowUpdated;
     }
 
+    @Override
+    public List<User> selectUserByCountry(String country) throws SQLException {
+        List<User> userList = new ArrayList<>();
+        Connection connection = getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_USER_BY_COUNTRY);
+        preparedStatement.setString(1, country);
+        System.out.println(preparedStatement);
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            int id = rs.getInt("id");
+            String name = rs.getString("name");
+            String email = rs.getString("email");
+            String ctr = rs.getString("country");
+            userList.add(new User(id, name, email, country));
+        }
+        return userList;
+    }
+
+    @Override
+    public List<User> sortByName() throws SQLException {
+        return null;
+    }
+
     private void printSQLException(SQLException ex) {
         for (Throwable e : ex) {
             if (e instanceof SQLException) {
@@ -178,4 +202,51 @@ public class UserDAO implements IUserDAO {
             printSQLException(e);
         }
     }
+
+    @Override
+    public void addUserTransaction(User user, int[] permision) throws SQLException {
+
+    }
+
+    @Override
+    public void insertUpdateWithoutTransaction() {
+
+    }
+
+    @Override
+    public List<User> showUserList() throws SQLException {
+        return null;
+    }
+
+    @Override
+    public boolean editUser(User user) throws SQLException {
+        return false;
+    }
+
+    @Override
+    public boolean deleteByProcedure(int id) throws SQLException {
+        return false;
+    }
+
+//    @Override
+//    public void addUserTransaction(User user, int[] permision) {
+//        Connection connection = null;
+//        PreparedStatement preparedStatement = null;
+//
+//        PreparedStatement pstmAssignment = null;
+//
+//        ResultSet rs = null;
+//
+//        try{
+//            conn = getConnection();
+//
+//            conn.setAutoCommit(false);
+//
+//            pstmt = com.prepareStatement(INSERT_USERS_SQL, Statement.RETURN_GENERATED_KEYS);
+//
+//            psmt.setString(1, user.getName());
+//            psmt.setString(2, user.getEmail());
+//            psmt.setString(3, user.getCountry());
+//        }
+//    }
 }
